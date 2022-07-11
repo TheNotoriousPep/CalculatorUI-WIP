@@ -45,8 +45,8 @@ private:
 	// im dumb and this shouldnt exist wxButton* calcZero;
 	wxButton* calcEqual;
 	
-	
-
+	wxDECLARE_EVENT_TABLE();
+	void OnButtonClicked(wxCommandEvent& evt);
 
 };
 
