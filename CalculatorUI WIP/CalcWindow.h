@@ -35,7 +35,7 @@ private:
 	wxTextCtrl* CalcBinDisplay;
 	wxTextCtrl* CalcHexDisplay;
 	wxTextCtrl* CalcDecDisplay;
-	//Numpad Function Keys (+,-.*,/,C,
+	//Numpad Function Keys (+,-.*,/,C,)
 	wxButton* calcPlus;
 	wxButton* calcMinus;
 	wxButton* calcMult;

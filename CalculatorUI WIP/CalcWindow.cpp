@@ -1,4 +1,5 @@
 #include "CalcWindow.h"
+#include "ButtonFactory.h"
 #include "string"
 /*
 I plan on emulating the Windows 10 Calculator, there may be some design obstacles that i'll have to overcome, but its an interesting design challenge.
@@ -42,20 +43,20 @@ CalcWindow::CalcWindow() : wxFrame(nullptr, wxID_ANY, "Calculator UI Draft", wxP
 	//i've made things so much worse for myself by doing that, and i hatemyself for thinking "oh it'll be easy, just make everything just like windows!"
 	//truly i am a hinderence to my own self.
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
-
+	ButtonFactory buttonFactory;
 	wxFont font(48, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_MAX, wxFONTWEIGHT_BOLD, false);
 	// though, i do like how there is a right align, so i can at least kinda keep the windows 10 dream alive.
 	CalculatorDisplay = new wxTextCtrl(panel, wxID_ANY, "",wxDefaultPosition,wxSize(335,75),wxTE_RIGHT);
 	CalculatorDisplay->SetFont(font);
 	CalculatorDisplay->Disable();
-	CalcBinDisplay = new wxTextCtrl(panel, 201, "Bin: 0", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-	CalcDecDisplay = new wxTextCtrl(panel, 202, "Dec: 0", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-	CalcHexDisplay = new wxTextCtrl(panel, 203, "Hex: 0", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcBinDisplay = new wxTextCtrl(panel, 201, "Bin: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcDecDisplay = new wxTextCtrl(panel, 202, "Dec: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcHexDisplay = new wxTextCtrl(panel, 203, "Hex: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
 
 	keypadDigits = new wxButton * [10];
 	//4x3 Matrix of numpad Keys, overloads are (Rows, Columns, vgap, hgap)
 	// turns out the 0 key is really cringe to work with, so i'm making the matrix a 4x3, which is cringe i know but i have to do it.
-	//*adendum, im doing something really stupid and im upping the grid size to 6x3
+	//*adendum, im doing something really stupid and im upping the grid size to 7x3
 	wxGridSizer* keypadSizer = new wxGridSizer(7,3,0,0);
 	
 	// i dont even know if i use this like ever.
@@ -73,15 +74,38 @@ CalcWindow::CalcWindow() : wxFrame(nullptr, wxID_ANY, "Calculator UI Draft", wxP
 	//Function Buttons 
 	//Numpad Function Keys (+,-.*,/,C,%,=)
 
-	calcPlus = new wxButton(panel,30000,"+",wxDefaultPosition,wxSize(80,45));		keypadSizer->Add(calcPlus,1,wxEXPAND|wxALL);
-	calcMinus = new wxButton(panel, 30001, "-", wxDefaultPosition, wxSize(80, 45)); keypadSizer->Add(calcMinus, 1, wxEXPAND | wxALL);
-	calcMult = new wxButton(panel, 30002, "*", wxDefaultPosition, wxSize(80, 45));  keypadSizer->Add(calcMult, 1, wxEXPAND | wxALL);
-	calcDiv = new wxButton(panel, 30003, "/", wxDefaultPosition, wxSize(80, 45));	keypadSizer->Add(calcDiv, 1, wxEXPAND | wxALL);
-	calcMod = new wxButton(panel, 30004, "%", wxDefaultPosition, wxSize(80, 45));	keypadSizer->Add(calcMod, 1, wxEXPAND | wxALL);
-	calcEqual = new wxButton(panel, 30005, "=", wxDefaultPosition, wxSize(80, 45)); keypadSizer->Add(calcEqual, 1, wxEXPAND | wxALL);
-	calcClear = new wxButton(panel, 30006, "C", wxDefaultPosition, wxSize(80, 45)); keypadSizer->Add(calcClear, 1, wxEXPAND | wxALL);
+	//Keeping this "Stale Code" in comments just a as a contrast to how much nicer and easier to read this became.
+
+	/*calcPlus = new wxButton(panel,30000,"+",wxDefaultPosition,wxSize(80,45));		
+	calcMinus = new wxButton(panel, 30001, "-", wxDefaultPosition, wxSize(80, 45)); 
+	calcMult = new wxButton(panel, 30002, "*", wxDefaultPosition, wxSize(80, 45));  
+	calcDiv = new wxButton(panel, 30003, "/", wxDefaultPosition, wxSize(80, 45));	
+	calcMod = new wxButton(panel, 30004, "%", wxDefaultPosition, wxSize(80, 45));	
+	calcEqual = new wxButton(panel, 30005, "=", wxDefaultPosition, wxSize(80, 45)); 
+	calcClear = new wxButton(panel, 30006, "C", wxDefaultPosition, wxSize(80, 45)); */
+
+	calcPlus  =	buttonFactory.calcPlusButton(panel, keypadSizer);
+	calcMinus = buttonFactory.calcMinusButton(panel, keypadSizer);
+	calcMult  =	buttonFactory.calcMultButton(panel, keypadSizer);
+	calcDiv   =	buttonFactory.calcDivButton(panel, keypadSizer);
+	calcMod   =	buttonFactory.calcModButton(panel, keypadSizer);
+	calcEqual = buttonFactory.calcEqualButton(panel, keypadSizer);
+	calcClear = buttonFactory.calcClearButton(panel, keypadSizer);
+
+	// I could probably consolidate this as well once i get the barebones stuff down.
+	// Yep, consolidated all to "ButtonFactory.cpp" and "ButtonFactory.h"
+
+
+	/*keypadSizer->Add(calcPlus, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcMinus, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcMult, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcDiv, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcMod, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcEqual, 1, wxEXPAND | wxALL);
+	keypadSizer->Add(calcClear, 1, wxEXPAND | wxALL);*/
 
 	
+
 	wxBoxSizer* gridFoundation = new wxBoxSizer(wxVERTICAL);
 	gridFoundation->Add(CalculatorDisplay, wxSizerFlags(0).Expand().Border(wxALL));
 	gridFoundation->Add(CalcBinDisplay, wxSizerFlags(0).Expand().Border(wxALL));
@@ -110,31 +134,40 @@ void CalcWindow::OnButtonClicked(wxCommandEvent& evt) {
 	}
 	case 1:{
 		CalculatorDisplay->AppendText("1");
-		break; }
+		break; 
+	}
 	case 2:{
 		CalculatorDisplay->AppendText("2");
-		break; }
+		break; 
+	}
 	case 3:{
 		CalculatorDisplay->AppendText("3");
-		break; }
+		break; 
+	}
 	case 4:{
 		CalculatorDisplay->AppendText("4");
-		break; }
+		break; 
+	}
 	case 5:{
 		CalculatorDisplay->AppendText("5");
-		break; }
+		break; 
+	}
 	case 6:{
 		CalculatorDisplay->AppendText("6");
-		break; }
+		break; 
+	}
 	case 7:{
 		CalculatorDisplay->AppendText("7");
-		break; }
+		break; 
+	}
 	case 8:{
 		CalculatorDisplay->AppendText("8");
-		break; }
+		break; 
+	}
 	case 9:{
 		CalculatorDisplay->AppendText("9");
-		break; }
+		break; 
+	}
 	case 30000: {
 		CalculatorDisplay->AppendText("+");
 		break;
