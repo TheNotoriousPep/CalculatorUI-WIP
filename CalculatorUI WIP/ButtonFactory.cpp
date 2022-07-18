@@ -15,19 +15,6 @@ enum calcButtonIDs
 	clear
 };
 
-enum calcKeypadDigitIDs
-{
-	zero,
-	one,
-	two,
-	three,
-	four,
-	five,
-	six,
-	seven,
-	eight,
-	nine
-};
 ButtonFactory::ButtonFactory() {
 
 }
@@ -75,7 +62,7 @@ wxButton* ButtonFactory::calcEqualButton(wxWindow* parent, wxGridSizer* grid) {
 	return equalButton;
 }
 wxButton* ButtonFactory::calcClearButton(wxWindow* parent, wxGridSizer* grid) {
-	wxButton* clearButton = new wxButton(parent, plus, "C", wxDefaultPosition, wxSize(80, 45));
+	wxButton* clearButton = new wxButton(parent, clear, "C", wxDefaultPosition, wxSize(80, 45));
 	grid->Add(clearButton, 1, wxEXPAND | wxALL);
 	return clearButton;
 }

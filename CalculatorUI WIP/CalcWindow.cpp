@@ -1,6 +1,7 @@
 #include "CalcWindow.h"
 #include "ButtonFactory.h"
 #include "string"
+#include "CalculatorProcessor.h"
 /*
 I plan on emulating the Windows 10 Calculator, there may be some design obstacles that i'll have to overcome, but its an interesting design challenge.
 I'm going to be using ScreenRuler Software to get accurate measurements of the Default microwindow size of the Windows 10 Calculator, and build around that.
@@ -16,6 +17,8 @@ I really REALLY don't want to hardcode positions but good god does this make me 
 
 
 */
+
+CalcProcessor* processor = CalcProcessor::GetInstance();
 
 wxBEGIN_EVENT_TABLE(CalcWindow,wxFrame)
 EVT_BUTTON(0, CalcWindow::OnButtonClicked)
@@ -34,10 +37,17 @@ EVT_BUTTON(30002, CalcWindow::OnButtonClicked)
 EVT_BUTTON(30003, CalcWindow::OnButtonClicked)
 EVT_BUTTON(30004, CalcWindow::OnButtonClicked)
 EVT_BUTTON(30005, CalcWindow::OnButtonClicked)
+EVT_BUTTON(30006, CalcWindow::OnButtonClicked)
 wxEND_EVENT_TABLE()
 
 
 CalcWindow::CalcWindow() : wxFrame(nullptr, wxID_ANY, "Calculator UI Draft", wxPoint(100, 100), wxSize(335, 535)) {
+
+	
+
+
+
+
 	//Calculator Display
 	//ok  so turns out hardcoding size is a really bad choice
 	//i've made things so much worse for myself by doing that, and i hatemyself for thinking "oh it'll be easy, just make everything just like windows!"
@@ -49,9 +59,15 @@ CalcWindow::CalcWindow() : wxFrame(nullptr, wxID_ANY, "Calculator UI Draft", wxP
 	CalculatorDisplay = new wxTextCtrl(panel, wxID_ANY, "",wxDefaultPosition,wxSize(335,75),wxTE_RIGHT);
 	CalculatorDisplay->SetFont(font);
 	CalculatorDisplay->Disable();
-	CalcBinDisplay = new wxTextCtrl(panel, 201, "Bin: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-	CalcDecDisplay = new wxTextCtrl(panel, 202, "Dec: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-	CalcHexDisplay = new wxTextCtrl(panel, 203, "Hex: ", wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	
+	//processor->SetBaseNumber(wxAtoi(CalculatorDisplay->GetLabel()));
+
+	CalcBinDisplay = new wxTextCtrl(panel, 201, "Bin: "+ processor->GetBinary(), wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcBinDisplay->Disable();
+	CalcDecDisplay = new wxTextCtrl(panel, 202, "Dec: "+processor->GetDecimal(), wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcDecDisplay->Disable();
+	CalcHexDisplay = new wxTextCtrl(panel, 203, "Hex: "+processor->GetHexadecimal(), wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+	CalcHexDisplay->Disable();
 
 	keypadDigits = new wxButton * [10];
 	//4x3 Matrix of numpad Keys, overloads are (Rows, Columns, vgap, hgap)
@@ -123,7 +139,6 @@ CalcWindow::~CalcWindow() {
 	delete[] keypadDigits;
 }
 
-
 void CalcWindow::OnButtonClicked(wxCommandEvent& evt) {
 	int evtID = evt.GetId();
 	switch (evtID)
@@ -189,7 +204,16 @@ void CalcWindow::OnButtonClicked(wxCommandEvent& evt) {
 		break;
 	}
 	case 30005: {
-		CalculatorDisplay->AppendText("=");
+
+		std::string result = processor->calcProcessorEquals(CalculatorDisplay->GetValue());
+		CalculatorDisplay->SetLabel(result);
+		CalcBinDisplay->SetLabel(processor->GetBinary());
+		CalcDecDisplay->SetLabel(processor->GetDecimal());
+		CalcHexDisplay->SetLabel(processor->GetHexadecimal());
+		break;
+	}
+	case 30006: {
+		CalculatorDisplay->SetLabel(processor->calcProcessorClear());
 		break;
 	}
 	default:
