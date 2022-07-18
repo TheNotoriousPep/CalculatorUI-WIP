@@ -8,9 +8,6 @@ public:
 	ButtonFactory();
 	~ButtonFactory();
 
-	
-	
-
 	wxButton* calcPlusButton(wxWindow* parent, wxGridSizer* grid);
 	wxButton* calcMinusButton(wxWindow* parent, wxGridSizer* grid);
 	wxButton* calcMultButton(wxWindow* parent, wxGridSizer* grid);

@@ -13,7 +13,7 @@ public:
 	//Constructor and Destructor for the window Frame
 	CalcWindow();
 	~CalcWindow();
-
+	//updates the displays
 	//Keypad Dimensions 80x45px
 	//This goes for all the keypad buttons, the exception to this are the HEX DEC and BIN displays
 	//type Display Dimensions are 70x55px
