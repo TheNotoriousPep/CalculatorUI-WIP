@@ -1,16 +1,15 @@
 #pragma once
 #include <string>
 #include <sstream>
-#include "CalcWindow.h"
 #include <vector>
-
-enum calcButtonIDs
-{
-	plus = 0,
-	minus,
-	mult,
-	divide,
-};
+#include "CalcWindow.h"
+#include "IBaseCommand.h"
+#include "Add.h"
+#include "Subtract.h"
+#include "Multiply.h"
+#include "Divide.h"
+#include "Modulo.h"
+#include "IBaseCommand.h"
 
 class CalcProcessor
 {
@@ -21,6 +20,7 @@ private:
 	static CalcProcessor* _calcProcessor;
 	int baseNumber;
 public:
+
 	static CalcProcessor* GetInstance() {
 
 		if (_calcProcessor == nullptr)
@@ -75,7 +75,7 @@ public:
 		return bin;
 	}
 
-	std::string calcProcessorAdd(std::string input1, std::string input2) {
+	/*std::string calcProcessorAdd(std::string input1, std::string input2) {
 		int math1 = std::stoi(input1);
 		int math2 = std::stoi(input2);
 		std::string result = std::to_string(math1 + math2);
@@ -111,15 +111,28 @@ public:
 		}
 		
 		return result;
-	}
+	}*/
 
 	std::string calcProcessorEquals(wxString calcDisplay) {
 		
 		int delimID = 0;
-		std::string delim[] = { "+","-","*","/" };
+		std::string delim[] = { "+","-","*","/","%"};
 		std::string input1, input2 = "";
 		std::string result = "";
 		std::vector<std::string> temp;
+
+		std::vector<IBaseCommand*> commands;
+		Add add;
+		Subtract subtract;
+		Multiply multiply;
+		Divide divide;
+		Modulo modulo;
+		//Vector to push the commands into.
+		commands.push_back(&add);
+		commands.push_back(&subtract);
+		commands.push_back(&multiply);
+		commands.push_back(&divide);
+		commands.push_back(&modulo);
 		//switch
 		
 
@@ -132,7 +145,7 @@ public:
 		size_t pos = 0;
 		// we then separate the two inputs, as input1 and input 2 as strings respectively, the previous calc functions conver to integers.
 		// use the previous functions to get the math and the result, then return that result as a string that updates the CalculatorDisplay.
-		for (size_t i = 0; i < 4; i++)
+		for (size_t i = 0; i < 5; i++)
 		{
 			while ((pos = parsedString.find(delim[i])) != std::string::npos)
 			{
@@ -142,29 +155,45 @@ public:
 				parsedString.erase(0, pos + delim[i].length());
 			}
 		}
+
 		input1 = temp[0];
 		input2 = parsedString;
+		
 		// I had  to adapt some of the code for this from this post by Vincenzo Pii, on January 10th 2013 on this Stackoverflow forum: 
 		//https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 		//I haven't even tested to see if this works but conceptually it sounds like it should separate the two strings to their respective inputs
+
 			switch (delimID)
 			{
 			case 0: {
-				result = calcProcessorAdd(input1, input2);
+				//result = calcProcessorAdd(input1, input2);
+				add.SetInputs(input1, input2);
+				result = commands[delimID]->Execute();
 				break;
 			}
 			case 1: {
-				result = calcProcessorSubtract(input1, input2);
+				//result = calcProcessorSubtract(input1, input2);
+				subtract.SetInputs(input1, input2);
+				result = commands[delimID]->Execute();
 				break;
 			}
 			case 2: {
-				result = calcProcessorMultiply(input1, input2);
+				//result = calcProcessorMultiply(input1, input2);
+				multiply.SetInputs(input1, input2);
+				result = commands[delimID]->Execute();
 				break;
 			}
 			case 3: {
-				result = calcProcessorDivide(input1, input2);
+				//result = calcProcessorDivide(input1, input2);
+				divide.SetInputs(input1, input2);
+				result = commands[delimID]->Execute();
 				break;
 			}
+			case 4: {
+				modulo.SetInputs(input1, input2);
+				result = commands[delimID]->Execute();
+			}
+
 			default:
 				break;
 			}
