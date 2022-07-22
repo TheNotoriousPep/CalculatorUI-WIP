@@ -1,5 +1,5 @@
 #include "ButtonFactory.h"
-#include "wx/wx.h"
+#include "../wx/wx.h"
 #include "CalcApp.h"
 #include "CalcWindow.h"
 

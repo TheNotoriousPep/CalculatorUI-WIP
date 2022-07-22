@@ -18,13 +18,13 @@ public:
 		std::string result = "";
 		int math1 = std::stoi(input1);
 		int math2 = std::stoi(input2);
-		if (math1 != 0 && math2 != 0)
+		if (math2 != 0)
 		{
 			result = std::to_string(math1 / math2);
 		}
 		else
 		{
-			result = "CANNOT DIVIDE BY ZERO, CLEAR ME NOW.";
+			result = "NaN";
 		}
 
 		return result;
