@@ -187,11 +187,24 @@ public:
 				//result = calcProcessorDivide(input1, input2);
 				divide.SetInputs(input1, input2);
 				result = commands[delimID]->Execute();
+				std::string zerocheck = "NaN";
+				if (result == zerocheck)
+				{
+					return result;
+					break;
+				}
 				break;
 			}
 			case 4: {
 				modulo.SetInputs(input1, input2);
 				result = commands[delimID]->Execute();
+				std::string zerocheck = "NaN";
+				if (result == zerocheck)
+				{
+					return result;
+					break;
+				}
+				break;
 			}
 
 			default:
