@@ -26,7 +26,6 @@ namespace CalcAppUnitTests
 		
 		//CalcProcessor Tests variables:
 			CalcProcessor* processor = CalcProcessor::GetInstance();
-			ButtonFactory button;
 			wxTextCtrl* display = new wxTextCtrl();
 			wxTextCtrl* binDisplay = new wxTextCtrl();
 			wxTextCtrl* hexDisplay = new wxTextCtrl();
@@ -112,8 +111,10 @@ namespace CalcAppUnitTests
 		//Cool! now time for the button checks ahahahahashahah how am i gonna do this.
 		TEST_METHOD(AddButton)
 		{
+			ButtonFactory button;
 			calcAdd = button.calcPlusButton(window,grid);
 			id = calcAdd->GetId();
+			calcAdd->SetLabel("+");
 			label = calcAdd->GetLabel();
 			std::string labelcheck = "+";
 			Assert::AreEqual(id, int(plus));
@@ -122,9 +123,12 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(MinusButton)
 		{
+			ButtonFactory button;
 			calcSubtract = button.calcMinusButton(window, grid);
 			id = calcSubtract->GetId();
+			calcSubtract->SetLabel("-");
 			label = calcSubtract->GetLabel();
+			//std::string hexstring = std::string(toHex.mb_str());
 			std::string labelcheck = "-";
 			Assert::AreEqual(id, int(minus));
 			Assert::AreEqual(label, labelcheck);
@@ -132,8 +136,10 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(MultButton)
 		{
+			ButtonFactory button;
 			calcMultiply = button.calcMultButton(window, grid);
 			id = calcMultiply->GetId();
+			calcMultiply->SetLabel("*");
 			label = calcMultiply->GetLabel();
 			std::string labelcheck = "";
 			Assert::AreEqual(id, int(mult));
@@ -142,8 +148,10 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(DivisionButton)
 		{
-			calcDivide = button.calcMinusButton(window, grid);
+			ButtonFactory button;
+			calcDivide = button.calcDivButton(window, grid);
 			id = calcDivide->GetId();
+			calcDivide->SetLabel("/");
 			label = calcDivide->GetLabel();
 			std::string labelcheck = "/";
 			Assert::AreEqual(id, int(divide));
@@ -151,8 +159,10 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(ModuloButton)
 		{
+			ButtonFactory button;
 			calcModulo = button.calcModButton(window, grid);
 			id = calcModulo->GetId();
+			calcModulo->SetLabel("%");
 			label = calcModulo->GetLabel();
 			std::string labelcheck = "%";
 			Assert::AreEqual(id, int(mod));
@@ -160,8 +170,10 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(EqualsButton)
 		{
+			ButtonFactory button;
 			calcEquals = button.calcEqualButton(window, grid);
 			id = calcEquals->GetId();
+			calcEquals->SetLabel("=");
 			label = calcEquals->GetLabel();
 			std::string labelcheck = "=";
 			Assert::AreEqual(id, int(equal));
@@ -169,10 +181,12 @@ namespace CalcAppUnitTests
 		}
 		TEST_METHOD(ClearButton)
 		{
+			ButtonFactory button;
 			calcClear = button.calcClearButton(window, grid);
 			id = calcClear->GetId();
+			calcClear->SetLabel("C");
 			label = calcClear->GetLabel();
-			std::string labelcheck = "=";
+			std::string labelcheck = "C";
 			Assert::AreEqual(id, int(clear));
 			Assert::AreEqual(label, labelcheck);
 		}
